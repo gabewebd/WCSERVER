@@ -181,7 +181,7 @@ app.get('/getStudent',(req, res) => {
 });
 
 // admin
-app.get('/getAdmin',(req, res) => {
+app.get('/postAdmin',(req, res) => {
     var response = {
         adminID: req.query.adminID,
         firstName: req.query.firstName,
