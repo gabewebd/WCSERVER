@@ -1,16 +1,27 @@
-// const express = require('express');
-import express, {response} from 'express'; // Same thing
+import express from 'express';
+import multer from 'multer';
 
-// we are going to use this old version instead of const __dirname = import.meta.dirname; to be compatible with Vercel
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
+var app = express();
 
 // more widely supported for different environments like Vercel
-const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Storage object, tells multer where to put the file and what name to give it
+var storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, 'public/uploads');
+  },
+  filename: (req, file, callback) => {
+    callback(null, file.originalname);
+  }
+});
+
+var upload = multer({ storage: storage }).fields([{ name: 'file', maxCount: 1 }]);
 
 // Page Routes
 // home
@@ -181,17 +192,25 @@ app.get('/getStudent',(req, res) => {
 });
 
 // admin
-app.get('/postAdmin',(req, res) => {
+app.post('/postAdmin', upload, (req, res) => {
     var response = {
-        adminID: req.query.adminID,
-        firstName: req.query.firstName,
-        lastName: req.query.lastName,
-        subject: req.query.subject,
-        house: req.query.house,
-    }
+        adminID: req.body.adminID,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        subject: req.body.subject,
+        house: req.body.house,
+    };
     
+    // Multer places uploaded file info in req.files
+    const uploadedFile = req.files['file'] ? req.files['file'][0] : null;
+
     if (response.adminID && response.firstName && response.lastName && response.house) {
         console.log("Admin Login: ", response);
+        if (uploadedFile) {
+            console.log("File uploaded:", uploadedFile);
+        } else {
+            console.log("No file was uploaded.");
+        }
         res.send(`
             <!DOCTYPE html>
             <html lang="en">

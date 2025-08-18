@@ -13,7 +13,7 @@
         </div>
         
         <div class="form-content">
-            <form action="/postAdmin" method="GET">
+            <form action="/postAdmin" method="POST" enctype="multipart/form-data">
                 <label for="adminID">Admin ID:</label>
                 <input type="text" id="adminID" name="adminID" placeholder="Enter your faculty ID" required />
                          
@@ -32,6 +32,9 @@
                     <option value="Slytherin">Slytherin</option>
                     <option value="None">No House Affiliation</option>
                 </select>
+
+                <label for="file">Upload Parchment:</label>
+                <input type="file" id="file" name="file">
                          
                 <input type="submit" value="Access Admin Dashboard">
             </form>
