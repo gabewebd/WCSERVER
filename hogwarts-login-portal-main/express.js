@@ -1,34 +1,19 @@
-// const express = require('express');
-import express, {response} from 'express'; // Same thing
-const __dirname = import.meta.dirname;
+import express, { response } from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(express.static('public'));
 
-// Page Routes
-// home
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/pages/home.html')
-});
-
-// user
-app.get('/userForm',(req, res) => {
-    res.sendFile(__dirname + '/pages/userForm.html')
-});
-
-// student
-app.get('/studentForm',(req, res) => {
-    res.sendFile(__dirname + '/pages/studentForm.html')
-});
-
-// admin
-app.get('/adminForm',(req, res) => {
-    res.sendFile(__dirname + '/pages/adminForm.html')
-});
+// Serve the Vue application's production build files
+// This assumes your Vue project is in a folder named 'vue-project'
+app.use(express.static(path.join(__dirname, 'vue-project', 'dist')));
 
 // API Routes
 // user
-app.get('/getUser',(req, res) => {
+app.get('/getUser', (req, res) => {
     var response = {
         userID: req.query.userID,
         firstName: req.query.firstName,
@@ -54,7 +39,7 @@ app.get('/getUser',(req, res) => {
                     <p class="spell-text">Your magical journey continues!</p>
                     
                     <div class="registration-details">
-                        <p><strong>Student ID:</strong> ${response.studentID}</p>
+                        <p><strong>User ID:</strong> ${response.userID}</p>
                         <p><strong>Name:</strong> ${response.firstName} ${response.lastName}</p>
                     </div>
                     
@@ -98,8 +83,9 @@ app.get('/getUser',(req, res) => {
     }
 });
 
+
 // student
-app.get('/getStudent',(req, res) => {
+app.get('/getStudent', (req, res) => {
     var response = {
         studentID: req.query.studentID,
         firstName: req.query.firstName,
@@ -172,7 +158,7 @@ app.get('/getStudent',(req, res) => {
 });
 
 // admin
-app.get('/getAdmin',(req, res) => {
+app.get('/getAdmin', (req, res) => {
     var response = {
         adminID: req.query.adminID,
         firstName: req.query.firstName,
@@ -246,44 +232,14 @@ app.get('/getAdmin',(req, res) => {
     }
 });
 
-// 404 Error Handler
-app.use((req, res, next) => {
-    res.status(404).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Page Not Found - Hogwarts Portal</title>
-            <link rel="stylesheet" href="/style.css">
-        </head>
-        <body class="response-page error-page">
-            <div class="magical-container single-column">
-                <img src="/images/Hogwartscrest.webp" alt="Hogwarts Crest" class="hogwarts-crest" />
-                <h1 class="error-404">404</h1>
-                <h2>Page Not Found!</h2>
-                <p class="magical-text">The magical page you seek does not exist</p>
-                <p>The page you're looking for cannot be found in our magical database.</p>
-                <p class="spell-text">Perhaps it was hidden by a Disillusionment Charm?</p>
-                
-                <div class="error-details">
-                    <h2>What happened?</h2>
-                    <p><strong>Requested Path:</strong> ${req.originalUrl}</p>
-                    <p>The path you're trying to access doesn't exist in our magical portal. Please check the URL for any spelling mistakes or return to the main portal.</p>
-                </div>
-                
-                <nav>
-                    <a href="/" class="magical-button">Return to Hogwarts Portal</a>
-                </nav>
-            </div>
-        </body>
-        </html>
-    `);
+// For any other routes, redirect to the Vue app's main file (index.html)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'vue-project', 'dist', 'index.html'));
 });
 
-const server = app.listen(5000, () => {
-    const host = server.address().address;
-    const port = server.address().port;
-    console.log(`Hogwarts Portal running at http://${host}:${port}`);
+
+const port = 5000;
+const server = app.listen(port, () => {
+    console.log(`Hogwarts Portal running on port ${port}`);
     console.log(`Welcome to the magical world of Hogwarts!`);
-})
+});

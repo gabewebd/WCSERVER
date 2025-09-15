@@ -1,25 +1,32 @@
 {
-  "name": "hogwarts-portal",
+  "name": "hogwarts-login-portal",
   "version": "1.0.0",
-  "main": "express.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node express.js",
-    "dev": "node express.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "keywords": [
     "hogwarts",
     "express",
-    "web-app"
+    "web-app",
+    "vue",
+    "vite",
+    "tailwind"
   ],
   "author": "",
   "license": "ISC",
   "description": "Hogwarts School Portal - A magical login system",
   "type": "module",
   "dependencies": {
-    "express": "^5.1.0"
+    "vue": "^3.4.21"
   },
-  "engines": {
-    "node": ">=18.0.0"
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "vite": "^5.2.0"
   }
 }
