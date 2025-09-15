@@ -1,51 +1,32 @@
-import express from 'express';
-import multer from 'multer';
+// const express = require('express');
+import express, {response} from 'express'; // Same thing
+const __dirname = import.meta.dirname;
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-var app = express();
-
-// more widely supported for different environments like Vercel
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Storage object, tells multer where to put the file and what name to give it
-var storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, 'public/uploads');
-  },
-  filename: (req, file, callback) => {
-    callback(null, file.originalname);
-  }
-});
-
-var upload = multer({ storage: storage }).fields([{ name: 'file', maxCount: 1 }]);
+const app = express();
+app.use(express.static('public'));
 
 // Page Routes
 // home
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pages', 'home.html'))
+    res.sendFile(__dirname + '/pages/home.html')
 });
 
 // user
 app.get('/userForm',(req, res) => {
-    res.sendFile(path.join(__dirname, 'pages', 'userForm.html'))
+    res.sendFile(__dirname + '/pages/userForm.html')
 });
 
 // student
 app.get('/studentForm',(req, res) => {
-    res.sendFile(path.join(__dirname, 'pages', 'studentForm.html'))
+    res.sendFile(__dirname + '/pages/studentForm.html')
 });
 
 // admin
 app.get('/adminForm',(req, res) => {
-    res.sendFile(path.join(__dirname, 'pages', 'adminForm.html'))
+    res.sendFile(__dirname + '/pages/adminForm.html')
 });
 
 // API Routes
-
 // user
 app.get('/getUser',(req, res) => {
     var response = {
@@ -116,7 +97,6 @@ app.get('/getUser',(req, res) => {
         `);
     }
 });
-
 
 // student
 app.get('/getStudent',(req, res) => {
@@ -192,25 +172,17 @@ app.get('/getStudent',(req, res) => {
 });
 
 // admin
-app.post('/postAdmin', upload, (req, res) => {
+app.get('/getAdmin',(req, res) => {
     var response = {
-        adminID: req.body.adminID,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        subject: req.body.subject,
-        house: req.body.house,
-    };
+        adminID: req.query.adminID,
+        firstName: req.query.firstName,
+        lastName: req.query.lastName,
+        subject: req.query.subject,
+        house: req.query.house,
+    }
     
-    // Multer places uploaded file info in req.files
-    const uploadedFile = req.files['file'] ? req.files['file'][0] : null;
-
     if (response.adminID && response.firstName && response.lastName && response.house) {
         console.log("Admin Login: ", response);
-        if (uploadedFile) {
-            console.log("File uploaded:", uploadedFile);
-        } else {
-            console.log("No file was uploaded.");
-        }
         res.send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -309,10 +281,9 @@ app.use((req, res, next) => {
     `);
 });
 
-// environment port for Vercel
-const port = process.env.PORT || 5000;
-
-const server = app.listen(port, () => {
-    console.log(`Hogwarts Portal running on port ${port}`);
+const server = app.listen(5000, () => {
+    const host = server.address().address;
+    const port = server.address().port;
+    console.log(`Hogwarts Portal running at http://${host}:${port}`);
     console.log(`Welcome to the magical world of Hogwarts!`);
-});
+})
